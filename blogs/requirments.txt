@@ -1,0 +1,6 @@
+fastapi
+uvicorn
+sqlalchemy
+passlib # hash password
+bcrypt #backend for password
+python-jose # jwt token
