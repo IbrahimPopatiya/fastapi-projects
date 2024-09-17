@@ -1,7 +1,7 @@
 from fastapi import APIRouter,Depends,status,HTTPException
 from .. import schemas,models,database
 from sqlalchemy.orm import Session
-from . repository import menu
+
 
 router = APIRouter(
   tags=['Menu']
@@ -12,7 +12,8 @@ get_db = database.get_db
 
 @router.get('/resturant/menu')
 def Menu(db:Session = Depends(get_db)):
-  return menu.get_menu(db)
+  menu = db.query(models.Dish).all()
+  return menu
   
 
 

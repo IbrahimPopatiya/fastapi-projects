@@ -1,7 +1,7 @@
 #response model help to hide that not want to show
 
 from pydantic import BaseModel
-from typing import Optional,List
+from typing import Optional,List,Literal
 
 
 class Dish(BaseModel):
@@ -36,3 +36,18 @@ class Customer(BaseModel):
   class Config:
         from_attributes = True
 
+class Login(BaseModel):
+   username: str
+   password: str
+   role: Literal["manager","customer"]
+
+
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+
+
+class TokenData(BaseModel):
+    email: Optional[str] = None
+    role: Optional[str] = None   

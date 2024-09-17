@@ -2,15 +2,17 @@ from fastapi import FastAPI, Depends,status,Response,HTTPException,Query
 from . import schemas, models,hashing
 from .database import engine, get_db
 from sqlalchemy.orm import Session
-from .routers import Menu,Order,Customer,Manager
+from .routers import Menu,Order,Customer,Manager,authentication
 # models.Base.metadata.drop_all(engine)
 models.Base.metadata.create_all(engine)
 
 app = FastAPI()
+app.include_router(authentication.router)
 app.include_router(Menu.router)
 app.include_router(Order.router)
 app.include_router(Customer.router)
 app.include_router(Manager.router)
+
 # def get_db(): 
 #   db = SessionLocal() 
 #   try:

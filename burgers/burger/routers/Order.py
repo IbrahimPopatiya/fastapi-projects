@@ -1,5 +1,5 @@
-from fastapi import APIRouter,Depends,status,HTTPException
-from .. import schemas,models,database
+from fastapi import APIRouter,Depends,status,HTTPException,Form
+from .. import schemas,models,database,oauth2
 from sqlalchemy.orm import Session
 
 
@@ -41,8 +41,8 @@ def get_order(id,quantity:int ,tablenumber:int, db:Session = Depends(get_db)):
   }
 
 @router.post('/resturant/order')
-def my_order(db:Session = Depends(get_db)):
-  customer_order = db.query(models.Order).all()
+def my_order(db:Session = Depends(get_db),current_customer: schemas.Customer = Depends(oauth2.get_current_customer),tablenumber:int = Form(...)):
+  customer_order = db.query(models.Order).filter(models.Order.tablenumber == tablenumber).all()
   return customer_order
 
 
