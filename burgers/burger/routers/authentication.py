@@ -3,14 +3,26 @@ from fastapi.security import OAuth2PasswordRequestForm
 from .. import schemas,models,database,token
 from ..hashing import Hash
 from sqlalchemy.orm import Session
+
+class OAuth2PasswordRequestFormWithRole(OAuth2PasswordRequestForm):
+    def __init__(
+        self, 
+        username: str = Form(...), 
+        password: str = Form(...), 
+        role: str = Form(...),  # Add role here
+    ):
+        super().__init__(username=username, password=password)
+        self.role = role
+
+
 router = APIRouter(
   prefix="/login",
   tags=['Authentication']
 )
 
 @router.post('/')
-def login(request:OAuth2PasswordRequestForm = Depends(),role: str = Form(...), db: Session = Depends(database.get_db)):
-  if role == "manager":
+def login(request:OAuth2PasswordRequestFormWithRole = Depends(), db: Session = Depends(database.get_db)):
+  if request.role == "manager":
     manager = db.query(models.Manager).filter(models.Manager.email == request.username).first()
     if not manager:
       raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,detail="Invalid manager credentials")
@@ -21,7 +33,7 @@ def login(request:OAuth2PasswordRequestForm = Depends(),role: str = Form(...), d
     return {"access_token":access_token, "token_type":"bearer"}
     
   
-  elif role == "customer":
+  elif request.role == "customer":
     customer = db.query(models.Customer).filter(models.Customer.email == request.username).first()
     if not customer:
       raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,detail="Invalid customer credentials")
